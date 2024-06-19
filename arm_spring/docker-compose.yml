@@ -1,0 +1,32 @@
+#docker-compose arm
+
+services:
+  mysql_spr:
+    image: arm64v8/mysql:8.0.32
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 1q2w3e4r
+      MYSQL_USER: bo20cy
+      MYSQL_PASSWORD: 1q2w3e4r
+      MYSQL_DATABASE: springfield
+    ports:
+      - "3306:3306"
+    volumes:
+      - /media/bo20cy/spr_project/spr_mysql_data:/var/lib/mysql
+    user: "1000"
+
+  rapi_test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rapi_spr_test:0.06
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: mysql_spr
+      DB_USERNAME: root  # 수정
+      DB_PASSWORD: 1q2w3e4r
+      DB_DATABASE: springfield  # 추가 (필요할 경우)
+    depends_on:
+      - mysql_spr
+    restart: unless-stopped
